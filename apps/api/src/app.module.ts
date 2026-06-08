@@ -12,7 +12,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
 import { RentalsModule } from './rentals/rentals.module';
 import { UsersModule } from './users/users.module';
-
+import { ReviewsModule } from './reviews/reviews.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -28,6 +28,7 @@ import { UsersModule } from './users/users.module';
     DisputesModule,
     NotificationsModule,
     AdminModule,
+    ReviewsModule,
   ],
 })
 export class AppModule {}

@@ -57,23 +57,25 @@ enum DisputeStatus {
 }
 
 model User {
-  id           String    @id @default(uuid())
-  phone        String    @unique
-  name         String?
-  role         UserRole  @default(renter)
-  kycStatus    KycStatus @default(none) @map("kyc_status")
-  kycLevel     String?   @map("kyc_level")
-  verifiedAt   DateTime? @map("verified_at")
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
+  id         String    @id @default(uuid())
+  phone      String    @unique
+  name       String?
+  role       UserRole  @default(renter)
+  kycStatus  KycStatus @default(none) @map("kyc_status")
+  kycLevel   String?   @map("kyc_level")
+  verifiedAt DateTime? @map("verified_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
 
-  kycProfile   KycProfile?
-  listings     Listing[]
-  rentals      Rental[]    @relation("RenterRentals")
-  otpCodes     OtpCode[]
-  auditLogs    AuditLog[]
-  disputesResolved Dispute[] @relation("ResolvedBy")
+  kycProfile       KycProfile?
+  listings         Listing[]
+  rentals          Rental[]          @relation("RenterRentals")
+  otpCodes         OtpCode[]
+  auditLogs        AuditLog[]
+  disputesResolved Dispute[]         @relation("ResolvedBy")
   disputeEvidence  DisputeEvidence[]
+  reviewsGiven     Review[]          @relation("ReviewGiven")
+  reviewsReceived  Review[]          @relation("ReviewReceived")
 
   @@map("users")
 }
@@ -94,16 +96,16 @@ model OtpCode {
 }
 
 model KycProfile {
-  id              String   @id @default(uuid())
-  userId          String   @unique @map("user_id")
-  providerRef     String?  @map("provider_ref")
-  panNumber       String?  @map("pan_number")
-  aadhaarMasked   String?  @map("aadhaar_masked")
-  bankAccountLast4 String? @map("bank_account_last4")
-  metadata        Json?
-  submittedAt     DateTime? @map("submitted_at")
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  id               String    @id @default(uuid())
+  userId           String    @unique @map("user_id")
+  providerRef      String?   @map("provider_ref")
+  panNumber        String?   @map("pan_number")
+  aadhaarMasked    String?   @map("aadhaar_masked")
+  bankAccountLast4 String?   @map("bank_account_last4")
+  metadata         Json?
+  submittedAt      DateTime? @map("submitted_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -111,20 +113,20 @@ model KycProfile {
 }
 
 model Listing {
-  id           String        @id @default(uuid())
-  ownerId      String        @map("owner_id")
-  title        String
-  description  String?
-  dailyPricePaise Int        @map("daily_price_paise")
-  depositPaise Int           @map("deposit_paise")
-  category     String?
-  city         String?
-  status       ListingStatus @default(draft)
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @updatedAt @map("updated_at")
+  id              String        @id @default(uuid())
+  ownerId         String        @map("owner_id")
+  title           String
+  description     String?
+  dailyPricePaise Int           @map("daily_price_paise")
+  depositPaise    Int           @map("deposit_paise")
+  category        String?
+  city            String?
+  status          ListingStatus @default(draft)
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
 
-  owner  User           @relation(fields: [ownerId], references: [id])
-  media  ListingMedia[]
+  owner   User           @relation(fields: [ownerId], references: [id])
+  media   ListingMedia[]
   rentals Rental[]
 
   @@index([status, city])
@@ -164,6 +166,7 @@ model Rental {
   rentalReturn RentalReturn?
   dispute      Dispute?
   auditLogs    AuditLog[]
+  reviews      Review[]
 
   @@index([status, depositHoldUntil])
   @@map("rentals")
@@ -221,20 +224,20 @@ model LedgerEntry {
 }
 
 model Dispute {
-  id                 String        @id @default(uuid())
-  rentalId           String        @unique @map("rental_id")
-  status             DisputeStatus @default(open)
-  claimedAmountPaise Int           @map("claimed_amount_paise")
-  resolution         String?
-  resolvedAmountPaise Int?         @map("resolved_amount_paise")
-  resolvedById       String?       @map("resolved_by_id")
-  resolvedAt         DateTime?     @map("resolved_at")
-  createdAt          DateTime      @default(now()) @map("created_at")
-  updatedAt          DateTime      @updatedAt @map("updated_at")
+  id                  String        @id @default(uuid())
+  rentalId            String        @unique @map("rental_id")
+  status              DisputeStatus @default(open)
+  claimedAmountPaise  Int           @map("claimed_amount_paise")
+  resolution          String?
+  resolvedAmountPaise Int?          @map("resolved_amount_paise")
+  resolvedById        String?       @map("resolved_by_id")
+  resolvedAt          DateTime?     @map("resolved_at")
+  createdAt           DateTime      @default(now()) @map("created_at")
+  updatedAt           DateTime      @updatedAt @map("updated_at")
 
-  rental    Rental            @relation(fields: [rentalId], references: [id], onDelete: Cascade)
-  resolvedBy User?            @relation("ResolvedBy", fields: [resolvedById], references: [id])
-  evidence  DisputeEvidence[]
+  rental     Rental            @relation(fields: [rentalId], references: [id], onDelete: Cascade)
+  resolvedBy User?             @relation("ResolvedBy", fields: [resolvedById], references: [id])
+  evidence   DisputeEvidence[]
 
   @@map("disputes")
 }
@@ -266,4 +269,26 @@ model AuditLog {
   user   User?   @relation(fields: [userId], references: [id])
 
   @@map("audit_logs")
+}
+
+model Review {
+  id String @id @default(uuid())
+
+  rentalId   String
+  reviewerId String
+  revieweeId String
+
+  rating  Int
+  comment String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  rental   Rental @relation(fields: [rentalId], references: [id], onDelete: Cascade)
+  reviewer User   @relation("ReviewGiven", fields: [reviewerId], references: [id])
+  reviewee User   @relation("ReviewReceived", fields: [revieweeId], references: [id])
+
+  @@unique([rentalId, reviewerId])
+  @@index([revieweeId])
+  @@index([reviewerId])
 }
