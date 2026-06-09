@@ -16,7 +16,7 @@ Rent what you need. Earn from what you own.
 
 ---
 
-## What is Rentify?
+## What is rent-mate?
 
 People often need things temporarily — a camera for a trip, a gaming console for the weekend, a projector for a presentation — but can't justify buying them. At the same time, millions of owned items sit unused most of the time.
 
@@ -104,7 +104,7 @@ Rentify is a community-driven platform that connects the two. Users can list pro
 
 ```bash
 git clone https://github.com/your-org/rentify.git
-cd rentify
+cd rent-mate
 ```
 
 ### 2. Install dependencies
@@ -236,13 +236,6 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a PR.
 | **Phase 4 — Scale** | Ongoing | Insurance, subscriptions, multi-city, business rentals |
 
 ---
-
-## License
-
-MIT © Rentify Contributors
-
----
-
 <div align="center">
 
 Built with contributors from the open source community · Part of Nexus Spring of Code 2025
