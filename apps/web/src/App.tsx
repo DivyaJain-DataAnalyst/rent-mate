@@ -2,38 +2,115 @@ import type { ReactNode } from 'react'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000'
 
+const MARQUEE_ITEMS = [
+  '📷 DSLR Camera', '🛺 Camping Gear', '🎮 Gaming Console', '🔧 Power Tools',
+  '🎸 Guitar', '🚲 Bicycle', '📽️ Projector', '🏕️ Tent', '🎤 Mic Setup',
+  '🛵 Scooter', '🎨 Art Supplies', '💻 MacBook',
+]
+
+const HOW_IT_WORKS = [
+  {
+    step: '01',
+    icon: '🗺️',
+    title: 'Discover nearby',
+    body: 'Browse verified listings by category, price range, and distance from you.',
+    color: 'from-violet-500/20 to-violet-500/5',
+    accent: 'border-violet-500/40',
+  },
+  {
+    step: '02',
+    icon: '🔐',
+    title: 'Book with confidence',
+    body: 'KYC-verified owners, transparent deposits, and a 72h inspection window.',
+    color: 'from-sky-500/20 to-sky-500/5',
+    accent: 'border-sky-500/40',
+  },
+  {
+    step: '03',
+    icon: '🤝',
+    title: 'Handoff → return',
+    body: 'Guided pickup and return flow. Disputes resolved in your favour, every time.',
+    color: 'from-emerald-500/20 to-emerald-500/5',
+    accent: 'border-emerald-500/40',
+  },
+]
+
+const TRUST_ITEMS = [
+  { icon: '🛡️', label: 'OTP auth & JWT sessions', desc: 'Passwordless, secure, instant' },
+  { icon: '🪪', label: 'KYC verification', desc: 'Aadhaar / PAN identity checks' },
+  { icon: '💰', label: 'Escrow deposits', desc: 'Funds held until safe return' },
+  { icon: '⚖️', label: 'Dispute resolution', desc: 'Admin-mediated, fair outcomes' },
+]
+
+const FLOATING_TAGS = [
+  { label: '₹499/day', top: '6%', left: '-2%', delay: '0s' },
+  { label: '⭐ 4.9', top: '18%', right: '-4%', delay: '1.5s' },
+  { label: '✓ Verified', bottom: '32%', left: '-4%', delay: '0.8s' },
+  { label: '📍 2.3 km', bottom: '8%', right: '-2%', delay: '2s' },
+]
+
+function NavLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a
+      href={href}
+      className="relative text-sm text-slate-400 transition-colors hover:text-white after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-0 after:bg-violet-400 after:transition-all hover:after:w-full"
+    >
+      {children}
+    </a>
+  )
+}
+
 function Button({
   children,
   variant = 'primary',
   href,
+  size = 'md',
 }: {
   children: ReactNode
-  variant?: 'primary' | 'secondary'
+  variant?: 'primary' | 'secondary' | 'ghost'
   href?: string
+  size?: 'sm' | 'md' | 'lg'
 }) {
-  const base =
-    'inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-violet-400/60 focus:ring-offset-2 focus:ring-offset-slate-950'
-  const styles =
-    variant === 'primary'
-      ? 'bg-violet-500 text-white hover:bg-violet-400'
-      : 'bg-white/10 text-white hover:bg-white/15'
+  const sizes = { sm: 'px-3 py-1.5 text-xs', md: 'px-5 py-2.5 text-sm', lg: 'px-7 py-3.5 text-base' }
+  const base = `inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-violet-400/60 focus:ring-offset-2 focus:ring-offset-slate-950 ${sizes[size]}`
+  const styles = {
+    primary: 'bg-violet-600 text-white hover:bg-violet-500 shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:-translate-y-0.5 active:translate-y-0',
+    secondary: 'bg-white/8 text-white border border-white/10 hover:bg-white/12 hover:border-white/20 hover:-translate-y-0.5',
+    ghost: 'text-slate-300 hover:text-white',
+  }[variant]
 
-  if (href) {
-    return (
-      <a href={href} className={`${base} ${styles}`}>
-        {children}
-      </a>
-    )
-  }
-
+  if (href) return <a href={href} className={`${base} ${styles}`}>{children}</a>
   return <button className={`${base} ${styles}`}>{children}</button>
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function FloatingTag({
+  label, top, left, right, bottom, delay,
+}: {
+  label: string; top?: string; left?: string; right?: string; bottom?: string; delay: string
+}) {
   return (
-    <div className="rounded-2xl border bg-white/[0.03] p-4">
-      <div className="text-xs uppercase tracking-wide text-slate-400">{label}</div>
-      <div className="mt-2 text-2xl font-semibold text-white">{value}</div>
+    <div
+      className="absolute animate-float rounded-full border border-white/10 bg-slate-900/80 px-3 py-1.5 text-xs font-semibold text-white shadow-lg backdrop-blur-sm"
+      style={{ top, left, right, bottom, animationDelay: delay }}
+    >
+      {label}
+    </div>
+  )
+}
+
+function MarqueeStrip() {
+  const items = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS]
+  return (
+    <div className="relative overflow-hidden border-y border-white/[0.06] py-3">
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-slate-950" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-slate-950" />
+      <div className="flex animate-marquee whitespace-nowrap">
+        {items.map((item, i) => (
+          <span key={i} className="mx-6 text-sm font-medium text-slate-400">
+            {item}
+          </span>
+        ))}
+      </div>
     </div>
   )
 }
@@ -41,209 +118,273 @@ function Stat({ label, value }: { label: string; value: string }) {
 export default function App() {
   return (
     <div className="min-h-screen bg-slate-950">
+      {/* Background */}
       <div className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_10%,rgba(139,92,246,0.35),transparent_45%),radial-gradient(circle_at_70%_30%,rgba(56,189,248,0.22),transparent_40%),radial-gradient(circle_at_50%_90%,rgba(16,185,129,0.18),transparent_40%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(2,6,23,0.2),rgba(2,6,23,1))]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_0%,rgba(124,92,255,0.18),transparent_55%),radial-gradient(ellipse_at_80%_10%,rgba(56,189,248,0.12),transparent_50%),radial-gradient(ellipse_at_50%_100%,rgba(16,185,129,0.1),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_60%,rgb(2,6,23))]" />
+        {/* Grid overlay */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '64px 64px' }} />
       </div>
 
-      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6">
-        <div className="flex items-center gap-3">
-          <div className="grid h-9 w-9 place-items-center rounded-xl bg-white/10 text-sm font-bold">
-            RM
-          </div>
-          <div className="leading-tight">
-            <div className="text-sm font-semibold text-white">Rent Mate</div>
-            <div className="text-xs text-slate-400">Rent anything, safely.</div>
-          </div>
-        </div>
+      {/* Navbar */}
+      <header className="glass sticky top-0 z-50 border-b border-white/[0.06]">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
+          <a href="/" className="flex items-center gap-3">
+            <div className="grid h-9 w-9 place-items-center rounded-xl bg-violet-600 text-sm font-black text-white shadow-lg shadow-violet-500/40">
+              RM
+            </div>
+            <div className="leading-tight">
+              <div className="text-sm font-bold text-white">Rent Mate</div>
+              <div className="text-[10px] text-slate-500">Hyperlocal rentals</div>
+            </div>
+          </a>
 
-        <nav className="hidden items-center gap-6 text-sm text-slate-300 md:flex">
-          <a className="hover:text-white" href="#how">
-            How it works
-          </a>
-          <a className="hover:text-white" href="#trust">
-            Trust & safety
-          </a>
-          <a className="hover:text-white" href="#pricing">
-            Pricing
-          </a>
-        </nav>
+          <nav className="hidden items-center gap-7 md:flex">
+            <NavLink href="#how">How it works</NavLink>
+            <NavLink href="#trust">Trust & Safety</NavLink>
+            <NavLink href="#download">Mobile app</NavLink>
+          </nav>
 
-        <div className="flex items-center gap-3">
-          <Button variant="secondary" href="#download">
-            Get the app
-          </Button>
-          <Button href="#list">List an item</Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" href="#how" size="sm">Sign in</Button>
+            <Button href="#list" size="sm">List an item ↗</Button>
+          </div>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl px-6 pb-20">
-        <section className="grid items-center gap-10 py-10 md:grid-cols-2 md:py-16">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border bg-white/[0.03] px-3 py-1 text-xs text-slate-300">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" />
-              API ready at <span className="font-mono text-slate-200">{API_BASE}</span>
+      <main className="mx-auto w-full max-w-6xl px-6 pb-24">
+
+        {/* Hero */}
+        <section className="relative grid items-center gap-12 py-16 md:grid-cols-2 md:py-24">
+          {/* Left */}
+          <div className="animate-fadeInUp">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-1.5 text-xs font-semibold text-emerald-300">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+              </span>
+              Now live · API at {API_BASE}
             </div>
 
-            <h1 className="mt-6 text-balance text-4xl font-semibold tracking-tight text-white md:text-6xl">
-              Your neighborhood rental marketplace, built for trust.
+            <h1 className="text-balance text-5xl font-black tracking-tighter text-white md:text-7xl">
+              Rent what{' '}
+              <span className="shimmer-text">you need.</span>
+              <br />
+              Earn from{' '}
+              <span className="shimmer-text">what you own.</span>
             </h1>
-            <p className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-slate-300 md:text-lg">
-              Discover items nearby, rent with deposits and disputes built in, and keep everything
-              organized from checkout to return.
+
+            <p className="animate-fadeInUp-delayed mt-6 max-w-lg text-pretty text-base leading-relaxed text-slate-400 md:text-lg">
+              India's peer-to-peer rental marketplace — built for college campuses and urban communities. KYC verified. Escrow protected. Real-time.
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Button href="#discover">Browse listings</Button>
-              <Button variant="secondary" href="#how">
-                See how it works
-              </Button>
+            <div className="animate-fadeInUp-delayed-2 mt-8 flex flex-wrap items-center gap-3">
+              <Button href="#discover" size="lg">Browse listings →</Button>
+              <Button variant="secondary" href="#how" size="lg">How it works</Button>
             </div>
 
-            <div className="mt-10 grid grid-cols-2 gap-4">
-              <Stat label="Fast onboarding" value="OTP login" />
-              <Stat label="Secure payments" value="Razorpay" />
-              <Stat label="Disputes" value="Built-in flow" />
-              <Stat label="Realtime" value="Redis jobs" />
-            </div>
-          </div>
-
-          <div className="relative">
-            <div className="absolute -inset-4 -z-10 rounded-3xl bg-white/[0.03] blur-xl" />
-            <div className="overflow-hidden rounded-3xl border bg-gradient-to-b from-white/[0.08] to-white/[0.02]">
-              <div className="flex items-center justify-between border-b px-5 py-4">
-                <div className="text-sm font-semibold text-white">Rent Mate</div>
-                <div className="text-xs text-slate-400">Web preview</div>
-              </div>
-              <div className="space-y-4 p-5">
-                <div className="rounded-2xl border bg-white/[0.03] p-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <div className="text-sm font-semibold text-white">DSLR Camera Kit</div>
-                      <div className="mt-1 text-xs text-slate-400">Mumbai • ₹499/day • Deposit ₹2,000</div>
-                    </div>
-                    <div className="rounded-full bg-emerald-400/15 px-2 py-1 text-xs text-emerald-200">
-                      Available
-                    </div>
-                  </div>
-                  <div className="mt-4 grid grid-cols-3 gap-3 text-xs text-slate-300">
-                    <div className="rounded-xl border bg-white/[0.02] p-3">
-                      <div className="text-slate-400">Pickup</div>
-                      <div className="mt-1 text-white">Today</div>
-                    </div>
-                    <div className="rounded-xl border bg-white/[0.02] p-3">
-                      <div className="text-slate-400">Return</div>
-                      <div className="mt-1 text-white">Sunday</div>
-                    </div>
-                    <div className="rounded-xl border bg-white/[0.02] p-3">
-                      <div className="text-slate-400">Total</div>
-                      <div className="mt-1 text-white">₹1,497</div>
-                    </div>
-                  </div>
-                  <div className="mt-4 flex gap-3">
-                    <div className="h-9 flex-1 rounded-xl bg-white/10" />
-                    <div className="h-9 w-24 rounded-xl bg-violet-500/80" />
-                  </div>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="rounded-2xl border bg-white/[0.03] p-4">
-                    <div className="text-xs uppercase tracking-wide text-slate-400">Trust</div>
-                    <div className="mt-2 text-sm font-semibold text-white">KYC-ready flows</div>
-                    <div className="mt-2 text-sm text-slate-300">
-                      Verified renters & owners, with clear handoff and return steps.
-                    </div>
-                  </div>
-                  <div className="rounded-2xl border bg-white/[0.03] p-4">
-                    <div className="text-xs uppercase tracking-wide text-slate-400">Support</div>
-                    <div className="mt-2 text-sm font-semibold text-white">Disputes & deposits</div>
-                    <div className="mt-2 text-sm text-slate-300">
-                      Built-in resolution flow for peace of mind.
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border bg-white/[0.03] p-4">
-                  <div className="text-xs uppercase tracking-wide text-slate-400">For owners</div>
-                  <div className="mt-2 text-sm font-semibold text-white">List in minutes</div>
-                  <div className="mt-2 text-sm text-slate-300">
-                    Set price, deposit, availability, and rules—everything else is automated.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="how" className="mt-6 grid gap-4 md:mt-12 md:grid-cols-3">
-          {[
-            {
-              title: 'Discover nearby',
-              body: 'Search listings by category, price, and location. Save favorites.',
-            },
-            {
-              title: 'Book with confidence',
-              body: 'Clear deposits, identity checks, and transparent timelines.',
-            },
-            {
-              title: 'Handoff → return',
-              body: 'Guided steps and receipts keep owners and renters aligned.',
-            },
-          ].map((c) => (
-            <div key={c.title} className="rounded-3xl border bg-white/[0.03] p-6">
-              <div className="text-lg font-semibold text-white">{c.title}</div>
-              <div className="mt-2 text-sm leading-relaxed text-slate-300">{c.body}</div>
-            </div>
-          ))}
-        </section>
-
-        <section id="trust" className="mt-10 rounded-3xl border bg-white/[0.03] p-6 md:mt-14 md:p-10">
-          <div className="grid gap-8 md:grid-cols-2">
-            <div>
-              <div className="text-xs uppercase tracking-wide text-slate-400">Trust & safety</div>
-              <div className="mt-3 text-2xl font-semibold text-white md:text-3xl">
-                Safety features that scale with your marketplace.
-              </div>
-              <div className="mt-3 text-sm leading-relaxed text-slate-300">
-                Your backend already includes auth, KYC, rentals, payments, notifications, and
-                disputes—this web UI is designed to match those flows.
-              </div>
-            </div>
-            <div className="grid gap-3">
-              {[
-                'OTP auth & JWT sessions',
-                'KYC verification hooks',
-                'Deposits + refunds',
-                'Disputes + admin review',
-              ].map((t) => (
-                <div key={t} className="rounded-2xl border bg-white/[0.02] p-4 text-sm text-slate-200">
-                  {t}
+            <div className="mt-10 flex items-center gap-6 text-sm text-slate-400">
+              {[['500+', 'Listings'], ['4.9★', 'Avg rating'], ['72h', 'Dispute SLA']].map(([val, lbl]) => (
+                <div key={lbl}>
+                  <span className="block text-xl font-black text-white">{val}</span>
+                  <span className="text-xs">{lbl}</span>
                 </div>
               ))}
             </div>
           </div>
-        </section>
 
-        <section id="download" className="mt-10 flex flex-col items-start justify-between gap-6 rounded-3xl border bg-gradient-to-r from-violet-500/15 to-sky-400/10 p-6 md:mt-14 md:flex-row md:items-center md:p-10">
-          <div>
-            <div className="text-2xl font-semibold text-white">Get Rent Mate on mobile</div>
-            <div className="mt-2 text-sm text-slate-200/80">
-              Your Expo app already runs with <span className="font-mono">npm run mobile:start</span>.
+          {/* Right — mock app card */}
+          <div className="relative">
+            {FLOATING_TAGS.map((tag) => (
+              <FloatingTag key={tag.label} {...tag} />
+            ))}
+
+            <div className="gradient-border relative overflow-hidden rounded-3xl bg-slate-900/60 shadow-2xl shadow-violet-500/10 backdrop-blur-sm">
+              {/* Mock header bar */}
+              <div className="flex items-center justify-between border-b border-white/[0.06] px-5 py-4">
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded-full bg-red-500/70" />
+                  <div className="h-3 w-3 rounded-full bg-yellow-500/70" />
+                  <div className="h-3 w-3 rounded-full bg-emerald-500/70" />
+                </div>
+                <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-400">
+                  rentmate.app/discover
+                </div>
+                <div className="text-xs text-slate-500">●●●</div>
+              </div>
+
+              <div className="space-y-4 p-5">
+                {/* Featured listing */}
+                <div className="overflow-hidden rounded-2xl border border-violet-500/30 bg-gradient-to-br from-violet-500/10 to-transparent">
+                  <div className="relative h-36 bg-gradient-to-br from-slate-800 to-slate-900">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(124,92,255,0.3),transparent_60%)]" />
+                    <div className="absolute left-3 top-3 rounded-full bg-violet-500/20 px-2 py-0.5 text-[10px] font-bold text-violet-300 backdrop-blur-sm border border-violet-500/30">
+                      ✦ FEATURED
+                    </div>
+                    <div className="absolute bottom-3 right-3 rounded-xl bg-slate-950/80 px-3 py-1.5 backdrop-blur-sm">
+                      <span className="text-lg font-black text-white">₹499</span>
+                      <span className="text-xs text-slate-400">/day</span>
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center text-5xl">📷</div>
+                  </div>
+                  <div className="p-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <div className="font-bold text-white">Sony Alpha DSLR Kit</div>
+                        <div className="mt-1 text-xs text-slate-400">📍 Andheri, Mumbai · 1.2 km away</div>
+                      </div>
+                      <div className="rounded-full bg-emerald-400/15 px-2 py-0.5 text-xs font-semibold text-emerald-300">Available</div>
+                    </div>
+                    <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+                      {[['Pickup', 'Today'], ['Return', 'Sunday'], ['Total', '₹1,497']].map(([k, v]) => (
+                        <div key={k} className="rounded-xl border border-white/[0.06] bg-white/[0.02] py-2">
+                          <div className="text-slate-500">{k}</div>
+                          <div className="mt-0.5 font-semibold text-white">{v}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-3 flex gap-2">
+                      <div className="h-9 flex-1 rounded-xl border border-white/[0.06] bg-white/[0.03]" />
+                      <div className="h-9 w-28 rounded-xl bg-violet-600" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mini cards */}
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { emoji: '🎮', name: 'PS5 Console', price: '₹299/day', dist: '0.8 km', color: 'from-sky-500/10' },
+                    { emoji: '⛺', name: 'Camping Tent', price: '₹199/day', dist: '3.1 km', color: 'from-emerald-500/10' },
+                  ].map((item) => (
+                    <div key={item.name} className={`rounded-2xl border border-white/[0.06] bg-gradient-to-br ${item.color} to-transparent p-3`}>
+                      <div className="text-2xl">{item.emoji}</div>
+                      <div className="mt-2 text-sm font-semibold text-white leading-tight">{item.name}</div>
+                      <div className="mt-1 text-xs text-violet-400 font-bold">{item.price}</div>
+                      <div className="mt-0.5 text-[10px] text-slate-500">📍 {item.dist}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-          <div className="flex gap-3">
-            <Button variant="secondary" href="#pricing">
-              View pricing
-            </Button>
-            <Button href="#list">Start listing</Button>
+        </section>
+
+        {/* Marquee */}
+        <MarqueeStrip />
+
+        {/* How it works */}
+        <section id="how" className="mt-20">
+          <div className="mb-10 text-center">
+            <div className="inline-block rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-violet-400">
+              How it works
+            </div>
+            <h2 className="mt-4 text-3xl font-black tracking-tight text-white md:text-4xl">
+              Three steps to your next rental
+            </h2>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            {HOW_IT_WORKS.map((c) => (
+              <div
+                key={c.step}
+                className={`card-hover gradient-border relative overflow-hidden rounded-3xl border bg-gradient-to-br ${c.color} to-transparent p-7`}
+              >
+                <div className="absolute right-5 top-5 font-black text-6xl text-white/[0.04]">{c.step}</div>
+                <div className="mb-4 text-4xl">{c.icon}</div>
+                <div className={`mb-1 inline-block rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest ${c.accent} text-slate-400`}>
+                  Step {c.step}
+                </div>
+                <div className="mt-2 text-lg font-bold text-white">{c.title}</div>
+                <div className="mt-2 text-sm leading-relaxed text-slate-400">{c.body}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Trust & Safety */}
+        <section id="trust" className="mt-20">
+          <div className="gradient-border overflow-hidden rounded-3xl bg-slate-900/40 p-8 md:p-12">
+            <div className="grid gap-10 md:grid-cols-2">
+              <div>
+                <div className="inline-block rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-emerald-400">
+                  Trust & Safety
+                </div>
+                <h2 className="mt-4 text-3xl font-black tracking-tight text-white md:text-4xl">
+                  Built safe,<br />from the ground up.
+                </h2>
+                <p className="mt-4 text-base leading-relaxed text-slate-400">
+                  Every transaction is wrapped in identity checks, escrow payments, and dispute resolution — so you can rent and lend with zero anxiety.
+                </p>
+                <Button variant="secondary" href="#download" size="lg">
+                  See full safety guide →
+                </Button>
+              </div>
+
+              <div className="grid gap-3">
+                {TRUST_ITEMS.map((t) => (
+                  <div
+                    key={t.label}
+                    className="card-hover flex items-center gap-4 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4"
+                  >
+                    <div className="grid h-11 w-11 flex-shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/5 text-2xl">
+                      {t.icon}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-white">{t.label}</div>
+                      <div className="text-xs text-slate-500">{t.desc}</div>
+                    </div>
+                    <div className="ml-auto text-slate-600">›</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Banner */}
+        <section id="download" className="relative mt-20 overflow-hidden rounded-3xl p-px">
+          <div className="absolute inset-0 bg-gradient-to-r from-violet-600 via-sky-500 to-emerald-500 opacity-60" />
+          <div className="relative rounded-[calc(1.5rem-1px)] bg-slate-950 p-8 md:p-12">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_60%_50%,rgba(124,92,255,0.15),transparent_60%)]" />
+            <div className="relative flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+              <div>
+                <div className="text-3xl font-black text-white md:text-4xl">
+                  Ready to start?
+                </div>
+                <p className="mt-2 text-slate-400">
+                  Download the app or list your first item in under 2 minutes.
+                </p>
+                <p className="mt-1 font-mono text-xs text-slate-600">
+                  npx expo start · pnpm --filter api dev
+                </p>
+              </div>
+              <div className="flex flex-shrink-0 flex-wrap gap-3">
+                <Button variant="secondary" href="#pricing">View pricing</Button>
+                <Button href="#list" size="lg">Start listing ↗</Button>
+              </div>
+            </div>
           </div>
         </section>
       </main>
 
-      <footer className="mx-auto w-full max-w-6xl border-t px-6 py-10 text-sm text-slate-400">
-        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-          <div>© {new Date().getFullYear()} Rent Mate</div>
-          <div className="font-mono text-xs">API: {API_BASE}</div>
+      {/* Footer */}
+      <footer className="border-t border-white/[0.04]">
+        <div className="mx-auto w-full max-w-6xl px-6 py-10">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-3">
+              <div className="grid h-8 w-8 place-items-center rounded-lg bg-violet-600 text-xs font-black text-white">RM</div>
+              <div>
+                <div className="text-sm font-bold text-white">Rent Mate</div>
+                <div className="text-xs text-slate-600">© {new Date().getFullYear()} · MIT License</div>
+              </div>
+            </div>
+            <div className="flex gap-6 text-xs text-slate-600">
+              {['Privacy', 'Terms', 'Contributing', 'GitHub'].map((l) => (
+                <a key={l} href="#" className="transition-colors hover:text-slate-300">{l}</a>
+              ))}
+            </div>
+            <div className="font-mono text-xs text-slate-700">API: {API_BASE}</div>
+          </div>
         </div>
       </footer>
     </div>

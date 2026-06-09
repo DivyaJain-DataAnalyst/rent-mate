@@ -39,8 +39,13 @@ const styles = StyleSheet.create({
   active: {
     backgroundColor: colors.primarySoft,
     borderColor: colors.primary,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 4,
   },
   emoji: { fontSize: 14 },
   label: { color: colors.textMuted, fontSize: 13, fontWeight: '600' },
-  activeLabel: { color: colors.primary },
+  activeLabel: { color: colors.primary, fontWeight: '700' },
 });
