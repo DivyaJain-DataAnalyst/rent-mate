@@ -43,10 +43,10 @@ const TRUST_ITEMS = [
 ]
 
 const FLOATING_TAGS = [
-  { label: '₹499/day', top: '12%', left: '8%', delay: '0s' },
-  { label: '⭐ 4.9', top: '25%', right: '6%', delay: '1.5s' },
-  { label: '✓ Verified', top: '60%', left: '4%', delay: '0.8s' },
-  { label: '📍 2.3 km', bottom: '20%', right: '8%', delay: '2s' },
+  { label: '₹499/day', top: '6%', left: '-2%', delay: '0s' },
+  { label: '⭐ 4.9', top: '18%', right: '-4%', delay: '1.5s' },
+  { label: '✓ Verified', bottom: '32%', left: '-4%', delay: '0.8s' },
+  { label: '📍 2.3 km', bottom: '8%', right: '-2%', delay: '2s' },
 ]
 
 function NavLink({ href, children }: { href: string; children: ReactNode }) {
@@ -130,7 +130,7 @@ export default function App() {
       <header className="glass sticky top-0 z-50 border-b border-white/[0.06]">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
           <a href="/" className="flex items-center gap-3">
-            <div className="animate-pulse-glow grid h-9 w-9 place-items-center rounded-xl bg-violet-600 text-sm font-black text-white">
+            <div className="grid h-9 w-9 place-items-center rounded-xl bg-violet-600 text-sm font-black text-white shadow-lg shadow-violet-500/40">
               RM
             </div>
             <div className="leading-tight">
@@ -315,7 +315,7 @@ export default function App() {
                 <p className="mt-4 text-base leading-relaxed text-slate-400">
                   Every transaction is wrapped in identity checks, escrow payments, and dispute resolution — so you can rent and lend with zero anxiety.
                 </p>
-                <Button href="#download" size="lg" variant="secondary" href="#download">
+                <Button variant="secondary" href="#download" size="lg">
                   See full safety guide →
                 </Button>
               </div>
