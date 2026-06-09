@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react'
+import Lottie from 'lottie-react'
+import { type ReactNode, useEffect, useState } from 'react'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000'
 
@@ -115,6 +116,55 @@ function MarqueeStrip() {
   )
 }
 
+// Reliable LottieFiles CDN animation — delivery/handoff themed
+const LOTTIE_SRC = 'https://lottie.host/0e4c43bf-b88a-4fd5-95e7-b855efedd3a4/Pj1BBjWxLq.json'
+
+function LottieHero() {
+  const [prefersReduced, setPrefersReduced] = useState(false)
+
+  const [animData, setAnimData] = useState<object | null>(null)
+
+  useEffect(() => {
+    setPrefersReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+    const t = setTimeout(() => {
+      fetch(LOTTIE_SRC)
+        .then((r) => r.json())
+        .then((data) => setAnimData(data))
+        .catch(() => null)
+    }, 100)
+    return () => clearTimeout(t)
+  }, [])
+
+  return (
+    <div className="relative flex items-center justify-center animate-fadeInUp">
+      {FLOATING_TAGS.map((tag) => (
+        <FloatingTag key={tag.label} {...tag} />
+      ))}
+      <div className="gradient-border relative overflow-hidden rounded-3xl bg-slate-900/60 shadow-2xl shadow-violet-500/10 backdrop-blur-sm p-6">
+        {animData && !prefersReduced ? (
+          <Lottie
+            animationData={animData}
+            loop
+            autoplay
+            style={{ height: 360, width: 360 }}
+          />
+        ) : (
+          // fallback for reduced-motion or before load
+          <div className="flex h-[360px] w-[360px] flex-col items-center justify-center gap-6">
+            <div className="text-8xl">🤝</div>
+            <div className="text-center text-sm text-slate-400">
+              Peer-to-peer rentals<br />KYC verified · Escrow protected
+            </div>
+          </div>
+        )}
+        <p className="text-center text-xs text-slate-500 mt-2 tracking-widest uppercase">
+          Peer-to-peer rentals · KYC verified
+        </p>
+      </div>
+    </div>
+  )
+}
+
 export default function App() {
   return (
     <div className="min-h-screen bg-slate-950">
@@ -122,7 +172,6 @@ export default function App() {
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_0%,rgba(124,92,255,0.18),transparent_55%),radial-gradient(ellipse_at_80%_10%,rgba(56,189,248,0.12),transparent_50%),radial-gradient(ellipse_at_50%_100%,rgba(16,185,129,0.1),transparent_50%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_60%,rgb(2,6,23))]" />
-        {/* Grid overlay */}
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '64px 64px' }} />
       </div>
 
@@ -193,80 +242,8 @@ export default function App() {
             </div>
           </div>
 
-          {/* Right — mock app card */}
-          <div className="relative">
-            {FLOATING_TAGS.map((tag) => (
-              <FloatingTag key={tag.label} {...tag} />
-            ))}
-
-            <div className="gradient-border relative overflow-hidden rounded-3xl bg-slate-900/60 shadow-2xl shadow-violet-500/10 backdrop-blur-sm">
-              {/* Mock header bar */}
-              <div className="flex items-center justify-between border-b border-white/[0.06] px-5 py-4">
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded-full bg-red-500/70" />
-                  <div className="h-3 w-3 rounded-full bg-yellow-500/70" />
-                  <div className="h-3 w-3 rounded-full bg-emerald-500/70" />
-                </div>
-                <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-400">
-                  rentmate.app/discover
-                </div>
-                <div className="text-xs text-slate-500">●●●</div>
-              </div>
-
-              <div className="space-y-4 p-5">
-                {/* Featured listing */}
-                <div className="overflow-hidden rounded-2xl border border-violet-500/30 bg-gradient-to-br from-violet-500/10 to-transparent">
-                  <div className="relative h-36 bg-gradient-to-br from-slate-800 to-slate-900">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(124,92,255,0.3),transparent_60%)]" />
-                    <div className="absolute left-3 top-3 rounded-full bg-violet-500/20 px-2 py-0.5 text-[10px] font-bold text-violet-300 backdrop-blur-sm border border-violet-500/30">
-                      ✦ FEATURED
-                    </div>
-                    <div className="absolute bottom-3 right-3 rounded-xl bg-slate-950/80 px-3 py-1.5 backdrop-blur-sm">
-                      <span className="text-lg font-black text-white">₹499</span>
-                      <span className="text-xs text-slate-400">/day</span>
-                    </div>
-                    <div className="absolute inset-0 flex items-center justify-center text-5xl">📷</div>
-                  </div>
-                  <div className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <div className="font-bold text-white">Sony Alpha DSLR Kit</div>
-                        <div className="mt-1 text-xs text-slate-400">📍 Andheri, Mumbai · 1.2 km away</div>
-                      </div>
-                      <div className="rounded-full bg-emerald-400/15 px-2 py-0.5 text-xs font-semibold text-emerald-300">Available</div>
-                    </div>
-                    <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
-                      {[['Pickup', 'Today'], ['Return', 'Sunday'], ['Total', '₹1,497']].map(([k, v]) => (
-                        <div key={k} className="rounded-xl border border-white/[0.06] bg-white/[0.02] py-2">
-                          <div className="text-slate-500">{k}</div>
-                          <div className="mt-0.5 font-semibold text-white">{v}</div>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="mt-3 flex gap-2">
-                      <div className="h-9 flex-1 rounded-xl border border-white/[0.06] bg-white/[0.03]" />
-                      <div className="h-9 w-28 rounded-xl bg-violet-600" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Mini cards */}
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { emoji: '🎮', name: 'PS5 Console', price: '₹299/day', dist: '0.8 km', color: 'from-sky-500/10' },
-                    { emoji: '⛺', name: 'Camping Tent', price: '₹199/day', dist: '3.1 km', color: 'from-emerald-500/10' },
-                  ].map((item) => (
-                    <div key={item.name} className={`rounded-2xl border border-white/[0.06] bg-gradient-to-br ${item.color} to-transparent p-3`}>
-                      <div className="text-2xl">{item.emoji}</div>
-                      <div className="mt-2 text-sm font-semibold text-white leading-tight">{item.name}</div>
-                      <div className="mt-1 text-xs text-violet-400 font-bold">{item.price}</div>
-                      <div className="mt-0.5 text-[10px] text-slate-500">📍 {item.dist}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Right — Lottie Hero Animation */}
+          <LottieHero />
         </section>
 
         {/* Marquee */}
