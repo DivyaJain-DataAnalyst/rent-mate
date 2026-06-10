@@ -7,22 +7,11 @@ import { JwtPayload } from '../common/decorators/current-user.decorator';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(config: ConfigService) {
-    const secret = config.get<string>('JWT_SECRET');
-    if (!secret) {
-      throw new Error(
-        'JWT_SECRET environment variable is not set. ' +
-        'Set a strong random secret before starting the server.',
-      );
-    }
-
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: secret,
-    });
-  }
-
-  validate(payload: JwtPayload): JwtPayload {
-    return payload;
-  }
-}
+     secretOrKey: (() => {
+  const secret = config.get<string>('JWT_SECRET');
+  if (!secret) throw new Error('JWT_SECRET environment variable is not set');
+  return secret;
+})(),
