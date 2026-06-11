@@ -2,7 +2,6 @@
 
 ![Community](https://img.shields.io/badge/Community-Welcoming-brightgreen?style=for-the-badge)
 ![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-blue?style=for-the-badge) 
-![Contributors](https://img.shields.io/github/contributors/AYUSHDAS0601/rent-mate?style=for-the-badge) 
 ![Respect Badge](https://img.shields.io/badge/Respect-Everyone-blueviolet?style=for-the-badge)  
 ![Contribution Badge](https://img.shields.io/badge/Contributions-Encouraged-orange?style=for-the-badge)  
 ![Kindness Badge](https://img.shields.io/badge/Be-Kind-ff69b4?style=for-the-badge)  
@@ -97,7 +96,7 @@ We guarantee that **no retaliation will occur** against those who report in good
 
 This Code of Conduct applies to:  
 - All community spaces (online).  
-- Public spaces where a person represents the community (e.g., GitHub repos, Discord).  
+- Public spaces where a person represents the community (e.g., GitHub repos, Discord, LinkedIn).  
 
 Whether you are **contributing code, writing documentation, attending discussions, or representing rent-mate**, you are expected to follow this Code of Conduct.  
 
