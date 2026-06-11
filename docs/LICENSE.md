@@ -1,4 +1,4 @@
-                            Apache License
+                                 Apache License
 
   **Copyright (c) 2026 Ayush Das**
                                  
@@ -177,5 +177,4 @@
       incurred by, or claims asserted against, such Contributor by reason
       of your accepting any such warranty or additional liability.
 
-**END OF TERMS AND CONDITIONS**
-
+  **END OF TERMS AND CONDITIONS**
