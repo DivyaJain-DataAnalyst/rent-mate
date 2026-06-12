@@ -20,13 +20,12 @@ This guide will walk you through the entire contribution process, from setting u
 3. [Ways to Contribute](#-ways-to-contribute)
 4. [How You Can Contribute](#-How-You-Can-Contribute)
 5. [Getting Started](#-Getting-Started)
-6. [Project Structure](#-Project-Structure)
-7. [PR review Process](#-pr-review-process)
-8. [Guidelines](#-Guidelines)
-9. [How To Contribute](#-how-to-contribute)
-10. [Need More Help](#-need-more-help)
-11. [Attribution](#-attribution)
-12. [Thank you for your contribution](#thank-you-for-your-contribution)
+6. [PR review Process](#-pr-review-process)
+7. [Guidelines](#-Guidelines)
+8. [How To Contribute](#-how-to-contribute)
+9. [Need More Help](#-need-more-help)
+10. [Attribution](#-attribution)
+11. [Thank you for your contribution](#thank-you-for-your-contribution)
 
 ![Line](https://user-images.githubusercontent.com/85225156/171937799-8fc9e255-9889-4642-9c92-6df85fb86e82.gif)
 
@@ -107,19 +106,6 @@ git commit -m "Added: new feature"
 git push origin feature/your-feature-name
 
 ### 7️⃣ Create Pull Request
-
-![Line](https://user-images.githubusercontent.com/85225156/171937799-8fc9e255-9889-4642-9c92-6df85fb86e82.gif)
-
-## 📂 Project Structure
-
-rent-mate/
-├── .github/workflows/
-├── apps/
-├── docs/
-├── packages/shared/
-README.md
-package-lock.json
-package.json
 
 ![Line](https://user-images.githubusercontent.com/85225156/171937799-8fc9e255-9889-4642-9c92-6df85fb86e82.gif)
 
